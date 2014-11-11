@@ -1,4 +1,6 @@
 /*
+* port to Spark Core by BartJen
+*
 * Demo for RF remote switch receiver.
 * For details, see RemoteReceiver.h!
 *
@@ -6,7 +8,7 @@
 * Connect the receiver to digital pin 2.
 */
 
-#include <RemoteReceiver.h>
+#include "RemoteReceiver.h"
 
 void setup() {
   Serial.begin(115200);
@@ -34,5 +36,4 @@ void showCode(unsigned long receivedCode, unsigned int period) {
   Serial.print(period);
   Serial.println("us.");
 }
-
 

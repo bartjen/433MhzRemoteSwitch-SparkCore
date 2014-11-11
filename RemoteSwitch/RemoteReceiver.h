@@ -1,4 +1,6 @@
 /*
+ * Port to Spark Core by BartJen
+ *
  * RemoteSwitch library v2.3.0 (20121229) made by Randy Simons http://randysimons.nl/
  *
  * License: GPLv3. See license.txt
@@ -6,8 +8,6 @@
 
 #ifndef RemoteReceiver_h
 #define RemoteReceiver_h
-
-#include <Arduino.h>
 
 typedef void (*RemoteReceiverCallBack)(unsigned long, unsigned int);
 
@@ -70,7 +70,7 @@ class RemoteReceiver {
 		* @param waitMillis number of milliseconds to monitor for signal.
 		* @return boolean If after waitMillis no signal was being processed, returns false. If before expiration a signal was being processed, returns true.
 		*/
-		static boolean isReceiving(int waitMillis = 150);
+		static bool isReceiving(int waitMillis = 150);
 
 		static void interruptHandler();
 
@@ -80,8 +80,8 @@ class RemoteReceiver {
 		volatile static unsigned short _state;		// State of decoding process. There are 49 states, 1 for "waiting for signal" and 48 for decoding the 48 edges in a valid code.
 		static unsigned short _minRepeats;
 		static RemoteReceiverCallBack _callback;
-		static boolean _inCallback;					// When true, the callback function is being executed; prevents re-entrance.
-		static boolean _enabled;					// If true, monitoring and decoding is enabled. If false, interruptHandler will return immediately.
+		static bool _inCallback;					// When true, the callback function is being executed; prevents re-entrance.
+		static bool _enabled;					// If true, monitoring and decoding is enabled. If false, interruptHandler will return immediately.
 
 };
 

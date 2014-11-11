@@ -1,4 +1,6 @@
 /*
+ * Port to Spark Core by BartJen
+ *
  * RemoteSwitch library v2.3.0 (20121229) made by Randy Simons http://randysimons.nl/
  * See RemoteReceiver.h for details.
  *
@@ -16,8 +18,8 @@ unsigned short RemoteReceiver::_interrupt;
 volatile unsigned short RemoteReceiver::_state;
 unsigned short RemoteReceiver::_minRepeats;
 RemoteReceiverCallBack RemoteReceiver::_callback;
-boolean RemoteReceiver::_inCallback = false;
-boolean RemoteReceiver::_enabled = false;
+bool RemoteReceiver::_inCallback = false;
+bool RemoteReceiver::_enabled = false;
 
 void RemoteReceiver::init(short interrupt, unsigned short minRepeats, RemoteReceiverCallBack callback) {
 	_interrupt = interrupt;
@@ -25,9 +27,9 @@ void RemoteReceiver::init(short interrupt, unsigned short minRepeats, RemoteRece
 	_callback = callback;
 
 	enable();
-	if (_interrupt >= 0) {
-		attachInterrupt(_interrupt, interruptHandler, CHANGE);
-	}
+//	if (_interrupt >= 0) {
+//		attachInterrupt(_interrupt, interruptHandler, CHANGE);
+//	}
 }
 
 void RemoteReceiver::enable() {
@@ -41,9 +43,9 @@ void RemoteReceiver::disable() {
 
 void RemoteReceiver::deinit() {
 	_enabled = false;
-	if (_interrupt >= 0) {
-		detachInterrupt(_interrupt);
-	}
+//	if (_interrupt >= 0) {
+//		detachInterrupt(_interrupt);
+//	}
 }
 
 void RemoteReceiver::interruptHandler() {
@@ -101,10 +103,10 @@ void RemoteReceiver::interruptHandler() {
 
 		// bit part durations can ONLY be 1 or 3 periods.
 		if (duration<=max1Period) {
-			receivedBit &= B1110; // Clear LSB of receivedBit
+			receivedBit &= 0xB1110; // Clear LSB of receivedBit
 		}
 		else if (duration>=min3Period && duration<=max3Period) {
-			receivedBit |= B1; // Set LSB of receivedBit
+			receivedBit |= 0xB1; // Set LSB of receivedBit
 		}
 		else { // Otherwise the entire sequence is invalid
 			_state=-1;
@@ -116,16 +118,16 @@ void RemoteReceiver::interruptHandler() {
 			receivedCode*=3;
 
 			// Only 4 LSB's are used; trim the rest.
-			switch (receivedBit & B1111) {
-				case B0101: // short long short long == B0101
+			switch (receivedBit & 0xB1111) {
+				case 0xB0101: // short long short long == B0101
 					// bit "0" received
 					receivedCode+=0; // I hope the optimizer handles this ;)
 					break;
-				case B1010: // long short long short == B1010
+				case 0xB1010: // long short long short == B1010
 					// bit "1" received
 					receivedCode+=1;
 					break;
-				case B0110: // short long long short
+				case 0xB0110: // short long long short
 					// bit "f" received
 					receivedCode+=2;
 					break;
@@ -178,7 +180,7 @@ void RemoteReceiver::interruptHandler() {
 	return;
 }
 
-boolean RemoteReceiver::isReceiving(int waitMillis) {
+bool RemoteReceiver::isReceiving(int waitMillis) {
 	unsigned long startTime=millis();
 
 	int waited; // Signed int!
